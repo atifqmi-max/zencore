@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zynsta - Login & Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            max-width: 450px;
+            width: 90%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            background: white;
+        }
+
+        .auth-body {
+            padding: 30px;
+        }
+
+        .auth-form {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="text"] {
+            background: #f8f9fa;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+
+        .btn-google {
+            background: white;
+            color: #757575;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .btn-google i {
+            color: #DB4437;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 10px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .verification-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .verification-section.active {
+            display: block;
+        }
+
+        .code-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .code-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.5em;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+        }
+
+        .code-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .timer {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .resend-link {
+            text-align: center;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .admin-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .admin-badge.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>Zynsta</h1>
+            <p>Connect with the world</p>
+        </div>
+        
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchTab('register')">Register</div>
+        </div>
+        
+        <div class="auth-body">
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password">
+                </div>
+                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <button class="btn btn-google" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" placeholder="Create a password">
+                </div>
+                <div class="form-group">
+                    <label for="regPhone">Phone Number (Optional)</label>
+                    <input type="text" id="regPhone" placeholder="Enter your phone number">
+                </div>
+                <button class="btn btn-primary" onclick="handleRegister()">Register</button>
+                
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                
+                <button class="btn btn-google" onclick="handleGoogleLogin()">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+            </div>
+            
+            <!-- Verification Section -->
+            <div id="verificationSection" class="verification-section">
+                <h3 style="text-align: center; margin-bottom: 15px;">Enter Verification Code</h3>
+                <p style="text-align: center; color: #6c757d; margin-bottom: 20px;">We've sent a code to your email</p>
+                
+                <div class="code-inputs">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 0)">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 1)">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 2)">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 3)">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 4)">
+                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 5)">
+                </div>
+                
+                <div class="timer" id="timer">05:00</div>
+                
+                <button class="btn btn-primary" onclick="verifyCode()">Verify & Continue</button>
+                
+                <div class="resend-link" onclick="resendCode()">Resend Code</div>
+                
+                <div id="verificationError" class="error-message"></div>
+                <div id="verificationSuccess" class="success-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-badge" id="adminBadge">
+        <i class="fas fa-shield-alt"></i> Admin Mode Active
+    </div>
+
+    <script>
+        // Admin credentials (private)
+        const ADMIN_EMAIL = 'atifqmi@gmail.com';
+        const ADMIN_PASSWORD = 'kistan**1';
+        
+        let currentUser = null;
+        let verificationCode = null;
+        let timerInterval = null;
+        let timeLeft = 300; // 5 minutes in seconds
+        
+        // Switch between login and register tabs
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                tabs[0].classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+            
+            // Hide verification section when switching tabs
+            document.getElementById('verificationSection').classList.remove('active');
+        }
+        
+        // Generate random 6-digit code
+        function generateVerificationCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+        
+        // Send verification email (simulated)
+        function sendVerificationEmail(email, code) {
+            console.log(`Verification code for ${email}: ${code}`);
+            
+            // Check if admin
+            if (email === ADMIN_EMAIL) {
+                document.getElementById('adminBadge').classList.add('active');
+            }
+            
+            // In a real application, you would send an actual email here
+            alert(`Verification code sent to ${email}\n(For demo purposes, code is: ${code})`);
+            
+            // Start timer
+            startTimer();
+        }
+        
+        // Start countdown timer
+        function startTimer() {
+            timeLeft = 300;
+            updateTimerDisplay();
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.querySelector('.resend-link').style.display = 'block';
+                }
+            }, 1000);
+        }
+        
+        // Update timer display
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Move to next input field
+        function moveToNext(current, index) {
+            if (current.value.length === 1) {
+                const next = document.querySelectorAll('.code-input')[index + 1];
+                if (next) {
+                    next.focus();
+                }
+            }
+            
+            // Auto-verify when all fields are filled
+            const inputs = document.querySelectorAll('.code-input');
+            const allFilled = Array.from(inputs).every(input => input.value.length === 1);
+            
+            if (allFilled) {
+                verifyCode();
+            }
+        }
+        
+        // Handle login
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Check if admin
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                currentUser = {
+                    email: email,
+                    username: 'admin',
+                    name: 'Admin User',
+                    isAdmin: true
+                };
+                
+                verificationCode = generateVerificationCode();
+                sendVerificationEmail(email, verificationCode);
+                showVerificationSection();
+                return;
+            }
+            
+            // Check if user exists in localStorage
+            const users = JSON.parse(localStorage.getItem('zynsta_users') || '[]');
+            const user = users.find(u => u.email === email && u.password === password);
+            
+            if (user) {
+                currentUser = user;
+                verificationCode = generateVerificationCode();
+                sendVerificationEmail(email, verificationCode);
+                showVerificationSection();
+            } else {
+                alert('Invalid email or password');
+            }
+        }
+        
+        // Handle register
+        function handleRegister() {
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const phone = document.getElementById('regPhone').value;
+            
+            if (!name || !email || !username || !password) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Check if user already exists
+            const users = JSON.parse(localStorage.getItem('zynsta_users') || '[]');
+            
+            if (users.some(u => u.email === email)) {
+                alert('Email already registered');
+                return;
+            }
+            
+            if (users.some(u => u.username === username)) {
+                alert('Username already taken');
+                return;
+            }
+            
+            // Create new user
+            const newUser = {
+                id: Date.now().toString(),
+                name: name,
+                email: email,
+                username: username,
+                password: password,
+                phone: phone,
+                isAdmin: false,
+                verified: false,
+                followers: 0,
+                following: 0,
+                posts: 0,
+                joinDate: new Date().toISOString(),
+                lastUsernameChange: null,
+                lastNameChange: null
+            };
+            currentUser = googleUser;
+            verificationCode = generateVerificationCode();
+            sendVerificationEmail(googleUser.email, verificationCode);
+            showVerificationSection();
+        }
+        
+        // Show verification section
+        function showVerificationSection() {
+            document.getElementById('verificationSection').classList.add('active');
+            
+            // Clear previous inputs
+            document.querySelectorAll('.code-input').forEach(input => {
+                input.value = '';
+            });
+            
+            // Focus first input
+            document.querySelectorAll('.code-input')[0].focus();
+        }
+        
+        // Verify code
+        function verifyCode() {
+            const inputs = document.querySelectorAll('.code-input');
+            const code = Array.from(inputs).map(input => input.value).join('');
+            
+            if (code.length !== 6) {
+                document.getElementById('verificationError').textContent = 'Please enter complete code';
+                document.getElementById('verificationError').style.display = 'block';
+                return;
+            }
+            
+            if (code === verificationCode) {
+                document.getElementById('verificationError').style.display = 'none';
+                document.getElementById('verificationSuccess').textContent = 'Verification successful! Redirecting...';
+                document.getElementById('verificationSuccess').style.display = 'block';
+                
+                // Save user session
+                localStorage.setItem('zynsta_current_user', JSON.stringify(currentUser));
+                
+                // Redirect based on user role
+                setTimeout(() => {
+                    if (currentUser.isAdmin) {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'homepage.html';
+                    }
+                }, 2000);
+            } else {
+                document.getElementById('verificationError').textContent = 'Invalid verification code';
+                document.getElementById('verificationError').style.display = 'block';
+            }
+        }
+        
+        // Resend code
+        function resendCode() {
+            if (timeLeft > 0) {
+                alert('Please wait for the timer to expire');
+                return;
+            }
+            
+            verificationCode = generateVerificationCode();
+            sendVerificationEmail(currentUser.email, verificationCode);
+        }
+        
+        // Check if already logged in
+        window.onload = function() {
+            const savedUser = localStorage.getItem('zynsta_current_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                if (user.isAdmin) {
+                    window.location.href = 'admin.html';
+                } else {
+                    window.location.href = 'homepage.html';
+                }
+            }
+        };
+    </script>
+</body>
+</html>
