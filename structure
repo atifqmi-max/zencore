@@ -1,0 +1,19 @@
+zynsta/
+├── auth.html
+├── homepage.html
+├── reels.html
+├── chats.html
+├── search.html
+├── profile.html
+├── store.html
+├── admin.html
+├── activity.html
+├── css/
+│   └── style.css
+├── js/
+│   ├── auth.js
+│   ├── main.js
+│   └── admin.js
+└── assets/
+    ├── images/
+    └── videos/
