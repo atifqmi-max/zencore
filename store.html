@@ -1,0 +1,707 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zynsta - Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 0 20px;
+            z-index: 1000;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left h1 {
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .nav-icon {
+            font-size: 1.5em;
+            color: #262626;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .profile-pic-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 0 20px;
+        }
+
+        /* Store Header */
+        .store-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .store-header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .store-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-info h3 {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+
+        .add-funds-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .add-funds-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Category Tabs */
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .category-tab:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .category-tab.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Plans Grid */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .plan-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .plan-header {
+            padding: 30px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .plan-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .plan-icon i {
+            font-size: 2.5em;
+            color: white;
+        }
+
+        .plan-name {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .plan-price {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .plan-price span {
+            font-size: 0.4em;
+            color: #8e8e8e;
+        }
+
+        .plan-body {
+            padding: 30px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .plan-features li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .plan-features i.fa-check {
+            color: #28a745;
+        }
+
+        .plan-features i.fa-times {
+            color: #dc3545;
+        }
+
+        .plan-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .plan-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .plan-btn.primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+        }
+
+        /* Features Section */
+        .features-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .feature-icon i {
+            font-size: 2em;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        /* Success Stories */
+        .testimonials {
+            margin-top: 60px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #333;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            text-align: center;
+        }
+
+        .testimonial-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .testimonial-role {
+            color: #8e8e8e;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .balance-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .plans-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+   </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <h1 onclick="window.location.href='homepage.html'">Zynsta</h1>
+        </div>
+        
+        <div class="nav-right">
+            <i class="fas fa-home nav-icon" onclick="window.location.href='homepage.html'"></i>
+            <i class="fab fa-facebook-messenger nav-icon" onclick="window.location.href='chats.html'"></i>
+            <i class="fas fa-store nav-icon active" onclick="window.location.href='store.html'"></i>
+            <i class="fas fa-compass nav-icon" onclick="window.location.href='search.html'"></i>
+            <i class="fas fa-heart nav-icon" onclick="window.location.href='activity.html'"></i>
+            <i class="fas fa-film nav-icon" onclick="window.location.href='reels.html'"></i>
+            <img src="https://via.placeholder.com/28" alt="Profile" class="profile-pic-small" onclick="window.location.href='profile.html'">
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Store Header -->
+        <div class="store-header">
+            <h1>Zynsta Store</h1>
+            <p>Boost your social media presence with our premium services</p>
+        </div>
+
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-info">
+                <h3>Your Balance</h3>
+                <div class="balance-amount" id="userBalance">$0.00</div>
+            </div>
+            <button class="add-funds-btn" onclick="addFunds()">
+                <i class="fas fa-plus-circle"></i> Add Funds
+            </button>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <div class="category-tab active" onclick="filterPlans('all')">All Services</div>
+            <div class="category-tab" onclick="filterPlans('followers')">Followers</div>
+            <div class="category-tab" onclick="filterPlans('likes')">Likes</div>
+            <div class="category-tab" onclick="filterPlans('comments')">Comments</div>
+            <div class="category-tab" onclick="filterPlans('views')">Views</div>
+        </div>
+
+        <!-- Plans Grid -->
+        <div class="plans-grid" id="plansGrid">
+            <!-- Plans will be loaded here dynamically -->
+        </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Instant Delivery</h3>
+                <p>Get your order delivered within minutes</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3>Secure Payment</h3>
+                <p>100% safe and secure transactions</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Round the clock customer support</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Real Growth</h3>
+                <p>Organic and real engagement</p>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="testimonials">
+            <h2>What Our Customers Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80" alt="User">
+                    <div class="testimonial-text">"Amazing service! Got 10k followers in just 2 days. Highly recommended!"</div>
+                    <div class="testimonial-name">Sarah Johnson</div>
+                    <div class="testimonial-role">Influencer</div>
+                </div>
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80" alt="User">
+                    <div class="testimonial-text">"The best place to boost your social media presence. Great prices and fast delivery."</div>
+                    <div class="testimonial-name">Mike Chen</div>
+                    <div class="testimonial-role">Business Owner</div>
+                </div>
+                <div class="testimonial-card">
+                    <img src="https://via.placeholder.com/80" alt="User">
+                    <div class="testimonial-text">"Excellent customer support. They helped me choose the right package for my needs."</div>
+                    <div class="testimonial-name">Emma Davis</div>
+                    <div class="testimonial-role">Content Creator</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store plans data
+        let plans = [
+            {
+                id: 1,
+                category: 'followers',
+                name: 'Starter Pack',
+                price: 9.99,
+                icon: 'fa-users',
+                features: [
+                    { text: '500 Followers', included: true },
+                    { text: 'Instant Delivery', included: true },
+                    { text: 'Real Accounts', included: true },
+                    { text: '24/7 Support', included: true },
+                    { text: 'Money Back Guarantee', included: true },
+                    { text: 'Premium Support', included: false }
+                ],
+                popular: false
+            },
+            {
+                id: 2,
+                category: 'followers',
+                name: 'Popular Pack',
+                price: 19.99,
+                icon: 'fa-users',
+                features: [
+                    { text: '2,000 Followers', included: true },
+                    { text: 'Instant Delivery', included: true },
+                    { text: 'Real Accounts', included: true },
+                    { text: '24/7 Support', included: true },
+                    { text: 'Money Back Guarantee', included: true },
+                    { text: 'Premium Support', included: true }
+                ],
+                popular: true
+            },
+            {
+                id: 3,
+                category: 'followers',
+                name: 'Pro Pack',
+                price: 39.99,
+                icon: 'fa-users',
+                features: [
+                    { text: '5,000 Followers', included: true },
+                    { text: 'Instant Delivery', included: true },
+                    { text: 'Real Accounts', included: true },
+                    { text: '24/7 Support', included: true },
+                    { text: 'Money Back Guarantee', included: true },
+                    { text: 'Premium Support', included: true }
+                ],
+                popular: false
+            },
+            {
+                id: 4,
+                category: 'likes',
+                name: 'Like Booster',
+                price: 4.99,
+                icon: 'fa-heart',
+                features: [
+                    { text: '500 Likes', included: true },
+                    { text: 'Instant Delivery', included: true },
+                    { text: 'Real Accounts', included: true },
+                    { text: '24/7 Support', included: true }
+                ],
+                popular: false
+            },
+            {
+                id: 5,
+                category: 'comments',
+                name: 'Comment Pack',
+                price: 7.99,
+                icon: 'fa-comment',
+                features: [
+                    { text: '100 Comments', included: true },
+                    { text: 'Custom Comments', included: true },
+                    { text: 'Real Accounts', included: true },
+                    { text: '24/7 Support', included: true }
+                ],
+                popular: false
+            },
+            {
+              id: 6,
+                category: 'views',
+                              name: 'View Booster',
+                price: 3.99,
+                icon: 'fa-eye',
+                features: [
+                    { text: '1,000 Views', included: true },
+                    { text: 'Instant Delivery', included: true },
+                    { text: 'Real Views', included: true },
+                    { text: '24/7 Support', included: true }
+                ],
+                popular: false
+            }
+        ];
+
+        // Current user balance
+        let userBalance = 0;
+
+        // Load plans
+        function loadPlans(category = 'all') {
+            const grid = document.getElementById('plansGrid');
+            grid.innerHTML = '';
+            
+            const filteredPlans = category === 'all' ? plans : plans.filter(p => p.category === category);
+            
+            filteredPlans.forEach(plan => {
+                const card = document.createElement('div');
+                card.className = 'plan-card';
+                
+                if (plan.popular) {
+                    card.innerHTML += '<div class="plan-badge">Most Popular</div>';
+                }
+                
+                card.innerHTML += `
+                    <div class="plan-header">
+                        <div class="plan-icon">
+                            <i class="fas ${plan.icon}"></i>
+                        </div>
+                        <div class="plan-name">${plan.name}</div>
+                        <div class="plan-price">
+                            $${plan.price}
+                            <span>/pack</span>
+                        </div>
+                    </div>
+                    <div class="plan-body">
+                        <ul class="plan-features">
+                            ${plan.features.map(f => `
+                                <li>
+                                    <i class="fas ${f.included ? 'fa-check' : 'fa-times'}" style="color: ${f.included ? '#28a745' : '#dc3545'};"></i>
+                                    ${f.text}
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <button class="plan-btn primary" onclick="buyNow(${plan.id})">
+                            Buy Now
+                        </button>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter plans by category
+        function filterPlans(category) {
+            // Update active tab
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Load filtered plans
+            loadPlans(category);
+        }
+
+        // Buy now function
+        function buyNow(planId) {
+            const plan = plans.find(p => p.id === planId);
+            
+            // Check if user has enough balance
+            if (userBalance < plan.price) {
+                if (confirm('Insufficient balance! Would you like to add funds?')) {
+                    addFunds();
+                }
+                return;
+            }
+            
+            // Open WhatsApp with order details
+            const phoneNumber = '+923437226308';
+            const message = encodeURIComponent(
+                `Hello! I want to purchase the following plan:\n\n` +
+                `Plan: ${plan.name}\n` +
+                `Price: $${plan.price}\n` +
+                `Category: ${plan.category}\n\n` +
+                `Please help me with the order.`
+            );
+            
+            window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+        }
+
+        // Add funds function
+        function addFunds() {
+            const amount = prompt('Enter amount to add (minimum $10):', '10');
+            
+            if (amount && !isNaN(amount) && parseFloat(amount) >= 10) {
+                // In a real app, this would integrate with a payment gateway
+                alert(`Redirecting to payment gateway for $${amount}...`);
+                
+                // Simulate payment success
+                setTimeout(() => {
+                    userBalance += parseFloat(amount);
+                    document.getElementById('userBalance').textContent = `$${userBalance.toFixed(2)}`;
+                    alert('Funds added successfully!');
+                }, 2000);
+            }
+        }
+
+        // Initialize store
+        window.onload = function() {
+            loadPlans();
+            
+            // Load user balance from localStorage
+            const user = JSON.parse(localStorage.getItem('zynsta_current_user') || '{}');
+            userBalance = user.balance || 0;
+            document.getElementById('userBalance').textContent = `$${userBalance.toFixed(2)}`;
+        };
+    </script>
+</body>
+</html>
