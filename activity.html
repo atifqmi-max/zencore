@@ -1,0 +1,516 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zynsta - Activity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #fafafa;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 0 20px;
+            z-index: 1000;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-left h1 {
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .nav-icon {
+            font-size: 1.5em;
+            color: #262626;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon.active {
+            color: #0095f6;
+        }
+
+        .profile-pic-small {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 600px;
+            margin: 80px auto 20px;
+            padding: 0 20px;
+        }
+
+        /* Activity Header */
+        .activity-header {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-header h2 {
+            font-size: 1.3em;
+        }
+
+        .activity-header span {
+            color: #0095f6;
+            cursor: pointer;
+        }
+
+        /* Activity Tabs */
+        .activity-tabs {
+            display: flex;
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .activity-tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #8e8e8e;
+            transition: all 0.3s;
+        }
+
+        .activity-tab.active {
+            color: #0095f6;
+            border-bottom: 3px solid #0095f6;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #efefef;
+            transition: background 0.3s;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .activity-avatar img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .activity-icon {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .activity-icon.follow {
+            background: #0095f6;
+            color: white;
+        }
+
+        .activity-icon.like {
+            background: #ed4956;
+            color: white;
+        }
+
+        .activity-icon.comment {
+            background: #00b894;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            margin-bottom: 5px;
+        }
+
+        .activity-text strong {
+            cursor: pointer;
+        }
+
+        .activity-text strong:hover {
+            text-decoration: underline;
+        }
+
+        .activity-time {
+            font-size: 0.8em;
+            color: #8e8e8e;
+        }
+
+        .activity-media {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Follow Button */
+        .follow-btn {
+            background: #0095f6;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 15px;
+        }
+
+        .follow-btn.following {
+            background: #efefef;
+            color: #262626;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8e8e8e;
+        }
+
+        .empty-state i {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #dbdbdb;
+        }
+
+        .empty-state h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #262626;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .activity-item {
+                flex-wrap: wrap;
+            }
+            
+            .follow-btn {
+                margin-left: 65px;
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <h1 onclick="window.location.href='homepage.html'">Zynsta</h1>
+        </div>
+        
+        <div class="nav-right">
+            <i class="fas fa-home nav-icon" onclick="window.location.href='homepage.html'"></i>
+            <i class="fab fa-facebook-messenger nav-icon" onclick="window.location.href='chats.html'"></i>
+            <i class="fas fa-plus-square nav-icon" onclick="openCreateModal()"></i>
+            <i class="fas fa-compass nav-icon" onclick="window.location.href='search.html'"></i>
+            <i class="fas fa-heart nav-icon active" onclick="window.location.href='activity.html'"></i>
+            <i class="fas fa-film nav-icon" onclick="window.location.href='reels.html'"></i>
+            <img src="https://via.placeholder.com/28" alt="Profile" class="profile-pic-small" onclick="window.location.href='profile.html'">
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Activity Header -->
+        <div class="activity-header">
+            <h2>Activity</h2>
+            <span onclick="markAllAsRead()">Mark all as read</span>
+        </div>
+
+        <!-- Activity Tabs -->
+        <div class="activity-tabs">
+            <div class="activity-tab active" onclick="switchActivityTab('all')">All</div>
+            <div class="activity-tab" onclick="switchActivityTab('follows')">Follows</div>
+            <div class="activity-tab" onclick="switchActivityTab('likes')">Likes</div>
+            <div class="activity-tab" onclick="switchActivityTab('comments')">Comments</div>
+        </div>
+
+        <!-- Activity Feed -->
+        <div class="activity-feed" id="activityFeed">
+            <!-- Activities will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <script>
+        // Sample activity data
+        const activities = [
+            {
+                id: 1,
+                type: 'follow',
+                user: {
+                    id: 101,
+                    name: 'John Doe',
+                    username: 'john_doe',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'started following you',
+                time: '2 minutes ago',
+                read: false
+            },
+            {
+                id: 2,
+                type: 'like',
+                user: {
+                    id: 102,
+                    name: 'Jane Smith',
+                    username: 'jane_smith',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'liked your reel',
+                time: '15 minutes ago',
+                media: 'https://via.placeholder.com/50',
+                read: false
+            },
+            {
+                id: 3,
+                type: 'comment',
+                user: {
+                    id: 103,
+                    name: 'Travel Blog',
+                    username: 'travel_blog',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'commented: "Amazing video! 🔥"',
+                time: '1 hour ago',
+                media: 'https://via.placeholder.com/50',
+                read: true
+            },
+            {
+                id: 4,
+                type: 'follow',
+                user: {
+                    id: 104,
+                    name: 'Fitness Guru',
+                    username: 'fitness_guru',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'started following you',
+                time: '3 hours ago',
+                read: true
+            },
+            {
+                id: 5,
+                type: 'like',
+                user: {
+                    id: 105,
+                    name: 'Food Lover',
+                    username: 'food_lover',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'liked your post',
+                time: '5 hours ago',
+                media: 'https://via.placeholder.com/50',
+                read: true
+            },
+            {
+                id: 6,
+                type: 'comment',
+                user: {
+                    id: 106,
+                    name: 'Tech Reviewer',
+                    username: 'tech_review',
+                    avatar: 'https://via.placeholder.com/50'
+                },
+                text: 'commented: "Great content!"',
+                time: '1 day ago',
+                media: 'https://via.placeholder.com/50',
+                read: true
+            }
+        ];
+
+        // Current filter
+        let currentFilter = 'all';
+
+        // Load activities
+        function loadActivities(filter = 'all') {
+            const feed = document.getElementById('activityFeed');
+            feed.innerHTML = '';
+            
+            let filteredActivities = activities;
+            
+            if (filter !== 'all') {
+                filteredActivities = activities.filter(a => a.type === filter.slice(0, -1)); // Remove 's' from filter
+            }
+            
+            if (filteredActivities.length === 0) {
+                feed.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-bell"></i>
+                        <h3>No activities yet</h3>
+                        <p>When you get notifications, they'll show up here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredActivities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = `activity-item ${!activity.read ? 'unread' : ''}`;
+                
+                // Activity icon based on type
+                let icon = '';
+                switch(activity.type) {
+                    case 'follow':
+                        icon = '<div class="activity-icon follow"><i class="fas fa-user-plus"></i></div>';
+                        break;
+                    case 'like':
+                        icon = '<div class="activity-icon like"><i class="fas fa-heart"></i></div>';
+                        break;
+                    case 'comment':
+                        icon = '<div class="activity-icon comment"><i class="fas fa-comment"></i></div>';
+                        break;
+                }
+              item.innerHTML = `
+                    <div class="activity-avatar">
+                        <img src="${activity.user.avatar}" alt="${activity.user.name}" onclick="viewProfile(${activity.user.id})">
+                        ${icon}
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong onclick="viewProfile(${activity.user.id})">${activity.user.name}</strong>
+                            <span>${activity.text}</span>
+                        </div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                    ${activity.media ? 
+                        `<img src="${activity.media}" class="activity-media" onclick="viewMedia()">` : 
+                        (activity.type === 'follow' ? 
+                            `<button class="follow-btn" onclick="followUser(this, ${activity.user.id})">Follow</button>` : 
+                            '')
+                    }
+                `;
+                
+                feed.appendChild(item);
+            });
+        }
+
+        // Switch activity tab
+        function switchActivityTab(filter) {
+            // Update active tab
+            document.querySelectorAll('.activity-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Load activities with filter
+            currentFilter = filter;
+            loadActivities(filter);
+        }
+
+        // Mark all as read
+        function markAllAsRead() {
+            activities.forEach(a => a.read = true);
+            loadActivities(currentFilter);
+            alert('All notifications marked as read');
+        }
+
+        // Follow user
+        function followUser(button, userId) {
+            if (button.classList.contains('following')) {
+                button.classList.remove('following');
+                button.textContent = 'Follow';
+            } else {
+                button.classList.add('following');
+                button.textContent = 'Following';
+            }
+        }
+
+        // View profile
+        function viewProfile(userId) {
+            window.location.href = 'profile.html?id=' + userId;
+        }
+
+        // View media
+        function viewMedia() {
+            window.location.href = 'reels.html';
+        }
+
+        // Open create modal
+        function openCreateModal() {
+            alert('Create new post/reel feature coming soon!');
+        }
+
+        // Initialize
+        window.onload = function() {
+            loadActivities();
+        };
+    </script>
+</body>
+</html>
