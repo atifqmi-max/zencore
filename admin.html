@@ -1,0 +1,1353 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zynsta - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+        }
+
+        /* Admin Container */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-header h2 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            opacity: 0.8;
+            font-size: 0.9em;
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-item.active {
+            background: rgba(255,255,255,0.2);
+            border-left-color: white;
+        }
+
+        .menu-item i {
+            width: 20px;
+            font-size: 1.2em;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .page-title h1 {
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .admin-info h4 {
+            margin-bottom: 3px;
+        }
+
+        .admin-info p {
+            color: #8e8e8e;
+            font-size: 0.9em;
+        }
+
+        /* Dashboard Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+        }
+
+        .stat-icon.blue {
+            background: #e8f0fe;
+            color: #0095f6;
+        }
+
+        .stat-icon.green {
+            background: #e3fcef;
+            color: #00b894;
+        }
+
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #a463f5;
+        }
+
+        .stat-icon.orange {
+            background: #fff0e0;
+            color: #f39c12;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #8e8e8e;
+            font-size: 0.9em;
+        }
+
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Tables */
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h3 {
+            color: #333;
+        }
+
+        .btn-primary {
+            background: #0095f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: #1877f2;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px 10px;
+            border-bottom: 2px solid #f0f0f0;
+            color: #8e8e8e;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #e3fcef;
+            color: #00b894;
+        }
+
+        .status-badge.banned {
+            background: #ffe3e3;
+            color: #dc3545;
+        }
+
+        .status-badge.pending {
+            background: #fff0e0;
+            color: #f39c12;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            width: 500px;
+            border-radius: 20px;
+            padding: 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5em;
+        }
+
+        .modal-header i {
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar-header h2,
+            .sidebar-header p,
+            .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+            
+            .menu-item {
+                justify-content: center;
+            }
+            
+            .menu-item i {
+                margin: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Zynsta</h2>
+                <p>Admin Panel</p>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="menu-item" onclick="showSection('users')">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </div>
+                <div class="menu-item" onclick="showSection('admins')">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admins</span>
+                </div>
+                <div class="menu-item" onclick="showSection('store')">
+                    <i class="fas fa-store"></i>
+                    <span>Store Plans</span>
+                </div>
+                <div class="menu-item" onclick="showSection('reels')">
+                    <i class="fas fa-film"></i>
+                    <span>Reels</span>
+                </div>
+                <div class="menu-item" onclick="showSection('analytics')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </div>
+                <div class="menu-item" onclick="showSection('settings')">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="page-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                </div>
+                <div class="admin-profile">
+                    <div class="admin-info">
+                        <h4>Admin User</h4>
+                        <p>admin@zynsta.com</p>
+                    </div>
+                    <img src="https://via.placeholder.com/50" alt="Admin">
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboardSection">
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-eye"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalViews">0</h3>
+                            <p>Total Views</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalReels">0</h3>
+                            <p>Total Reels</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalRevenue">$0</h3>
+                            <p>Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>User Growth</h3>
+                        <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    <div class="chart-card">
+                        <h3>Revenue Overview</h3>
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Recent Users</h3>
+                        <button class="btn-primary" onclick="showSection('users')">
+                            <i class="fas fa-eye"></i> View All
+                        </button>
+                    </div>
+                    <table id="recentUsersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Followers</th>
+                                <th>Status</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="usersSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>All Users</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" placeholder="Search users..." style="padding: 8px; border: 1px solid #dbdbdb; border-radius: 5px;">
+                            <button class="btn-primary" onclick="exportUsers()">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <table id="allUsersTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Followers</th>
+                                <th>Following</th>
+                                <th>Verified</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Admins Section -->
+            <div id="adminsSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Admin Users</h3>
+                        <button class="btn-primary" onclick="openAddAdminModal()">
+                            <i class="fas fa-plus"></i> Add Admin
+                        </button>
+                    </div>
+                    <table id="adminsTable">
+                        <thead>
+                            <tr>
+                                <th>Admin</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Last Active</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Store Plans Section -->
+            <div id="storeSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Store Plans</h3>
+                        <button class="btn-primary" onclick="openAddPlanModal()">
+                            <i class="fas fa-plus"></i> Add Plan
+                        </button>
+                    </div>
+                    <table id="plansTable">
+                        <thead>
+                            <tr>
+                                <th>Plan Name</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Features</th>
+                                <th>Popular</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reels Section -->
+            <div id="reelsSection" style="display: none;">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h3>Reels Management</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <select style="padding: 8px; border: 1px solid #dbdbdb; border-radius: 5px;">
+                                <option>All Reels</option>
+                                <option>Trending</option>
+                                <option>Reported</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table id="reelsTable">
+                        <thead>
+                            <tr>
+                                <th>Reel</th>
+                                <th>User</th>
+                                <th>Views</th>
+                                <th>Likes</th>
+                                <th>Comments</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analyticsSection" style="display: none;">
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Daily Active Users</h3>
+                        <canvas id="dailyActiveChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Platform Engagement</h3>
+                        <canvas id="engagementChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>12.5m</h3>
+                            <p>Avg. Time Spent</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i class="fas fa-retweet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>45.2k</h3>
+                            <p>Daily Shares</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>23.1k</h3>
+                            <p>Daily Comments</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>156k</h3>
+                            <p>Daily Likes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settingsSection" style="display: none;">
+                <div class="table-card">
+                    <h3 style="margin-bottom: 20px;">General Settings</h3>
+                    
+                    <div class="form-group">
+                        <label>WhatsApp Business Number</label>
+                        <input type="text" id="whatsappNumber" value="+923437226308">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Buy Now Button Link</label>
+                        <input type="text" id="buyNowLink" value="https://wa.me/923437226308">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Maintenance Mode</label>
+                        <select id="maintenanceMode">
+                            <option value="off">Off</option>
+                            <option value="on">On</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Default User Role</label>
+                        <select id="defaultRole">
+                            <option value="user">User</option>
+                            <option value="creator">Creator</option>
+                            <option value="business">Business</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Admin Modal -->
+    <div class="modal" id="addAdminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Admin</h2>
+                <i class="fas fa-times" onclick="closeAddAdminModal()"></i>
+            </div>
+            
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="adminName" placeholder="Enter full name">
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="adminEmail" placeholder="Enter email">
+            </div>
+            
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPassword" placeholder="Enter password">
+            </div>
+            
+            <div class="form-group">
+                <label>Role</label>
+                <select id="adminRole">
+                    <option value="super">Super Admin</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="support">Support</option>
+                </select>
+            </div>
+            
+            <button class="btn-primary" onclick="addAdmin()">Add Admin</button>
+        </div>
+    </div>
+
+    <!-- Add Plan Modal -->
+    <div class="modal" id="addPlanModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Store Plan</h2>
+                <i class="fas fa-times" onclick="closeAddPlanModal()"></i>
+            </div>
+            
+            <div class="form-group">
+                <label>Plan Name</label>
+                <input type="text" id="planName" placeholder="e.g., Starter Pack">
+            </div>
+            
+            <div class="form-group">
+                <label>Category</label>
+                <select id="planCategory">
+                    <option value="followers">Followers</option>
+                    <option value="likes">Likes</option>
+                    <option value="comments">Comments</option>
+                    <option value="views">Views</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Price ($)</label>
+                <input type="number" id="planPrice" placeholder="9.99" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label>Features (one per line)</label>
+                <textarea id="planFeatures" placeholder="500 Followers&#10;Instant Delivery&#10;Real Accounts"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="planPopular"> Mark as Popular
+                </label>
+            </div>
+            
+            <button class="btn-primary" onclick="addPlan()">Add Plan</button>
+        </div>
+    </div>
+
+    <!-- Verify User Modal -->
+    <div class="modal" id="verifyUserModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Verify User</h2>
+                <i class="fas fa-times" onclick="closeVerifyModal()"></i>
+            </div>
+            
+            <p>Are you sure you want to verify this user?</p>
+            <p style="color: #8e8e8e; margin: 10px 0;">The user will receive a blue verified badge.</p>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-primary" onclick="confirmVerify()">Verify User</button>
+                <button class="btn-danger" onclick="closeVerifyModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        let users = [
+            { id: 1, name: 'John Doe', username: 'john_doe', email: 'john@example.com', phone: '+1234567890', avatar: 'https://via.placeholder.com/40', followers: 1234, following: 567, verified: false, status: 'active', joinDate: '2024-01-15' },
+            { id: 2, name: 'Jane Smith', username: 'jane_smith', email: 'jane@example.com', phone: '+0987654321', avatar: 'https://via.placeholder.com/40', followers: 2341, following: 678, verified: true, status: 'active', joinDate: '2024-01-10' },
+            { id: 3, name: 'Bob Wilson', username: 'bob_w', email: 'bob@example.com', phone: '+1122334455', avatar: 'https://via.placeholder.com/40', followers: 567, following: 234, verified: false, status: 'banned', joinDate: '2024-01-05' }
+        ];
+
+        let admins = [
+            { id: 1, name: 'Admin User', email: 'atifqmi@gmail.com', role: 'super', lastActive: 'Just now', avatar: 'https://via.placeholder.com/40' },
+            { id: 2, name: 'Moderator', email: 'mod@zynsta.com', role: 'moderator', lastActive: '5 mins ago', avatar: 'https://via.placeholder.com/40' }
+        ];
+
+        let storePlans = [
+            { id: 1, name: 'Starter Pack', category: 'followers', price: 9.99, features: ['500 Followers', 'Instant Delivery', 'Real Accounts'], popular: false },
+            { id: 2, name: 'Popular Pack', category: 'followers', price: 19.99, features: ['2000 Followers', 'Instant Delivery', 'Real Accounts', 'Premium Support'], popular: true }
+        ];
+
+        let reels = [
+            { id: 1, user: 'john_doe', thumbnail: 'https://via.placeholder.com/60', views: 12345, likes: 1234, comments: 89, status: 'active' },
+            { id: 2, user: 'jane_smith', thumbnail: 'https://via.placeholder.com/60', views: 23456, likes: 2345, comments: 156, status: 'active' }
+        ];
+
+        let currentUserId = null;
+
+        // Initialize charts
+        let userGrowthChart, revenueChart, dailyActiveChart, engagementChart;
+
+        // Show section
+        function showSection(section) {
+            // Update menu active state
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+          // Hide all sections
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('usersSection').style.display = 'none';
+            document.getElementById('adminsSection').style.display = 'none';
+            document.getElementById('storeSection').style.display = 'none';
+            document.getElementById('reelsSection').style.display = 'none';
+            document.getElementById('analyticsSection').style.display = 'none';
+            document.getElementById('settingsSection').style.display = 'none';
+            
+            // Show selected section
+            document.getElementById(section + 'Section').style.display = 'block';
+            document.getElementById('pageTitle').textContent = section.charAt(0).toUpperCase() + section.slice(1);
+            
+            // Load section data
+            switch(section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'admins':
+                    loadAdmins();
+                    break;
+                case 'store':
+                    loadStorePlans();
+                    break;
+                case 'reels':
+                    loadReels();
+                    break;
+                case 'analytics':
+                    loadAnalytics();
+                    break;
+            }
+        }
+
+        // Load dashboard
+        function loadDashboard() {
+            // Update stats
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalViews').textContent = '1.2M';
+            document.getElementById('totalReels').textContent = reels.length;
+            document.getElementById('totalRevenue').textContent = '$12,345';
+            
+            // Load recent users
+            const tbody = document.querySelector('#recentUsersTable tbody');
+            tbody.innerHTML = '';
+            
+            users.slice(0, 5).forEach(user => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>
+                        <div class="user-info">
+                            <img src="${user.avatar}" alt="${user.name}">
+                            <div>
+                                <div>${user.name}</div>
+                                <div style="font-size: 0.8em; color: #8e8e8e;">@${user.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.followers.toLocaleString()}</td>
+                    <td><span class="status-badge ${user.status}">${user.status}</span></td>
+                    <td>${user.joinDate}</td>
+                `;
+            });
+            
+            // Initialize charts if not already
+            if (!userGrowthChart) {
+                initCharts();
+            }
+        }
+
+        // Initialize charts
+        function initCharts() {
+            const ctx1 = document.getElementById('userGrowthChart').getContext('2d');
+            userGrowthChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Users',
+                        data: [100, 250, 400, 650, 850, 1200],
+                        borderColor: '#0095f6',
+                        tension: 0.4
+                    }]
+                }
+            });
+            
+            const ctx2 = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [1000, 2500, 3500, 5000, 7500, 12345],
+                        backgroundColor: '#00b894'
+                    }]
+                }
+            });
+        }
+
+        // Load users
+        function loadUsers() {
+            const tbody = document.querySelector('#allUsersTable tbody');
+            tbody.innerHTML = '';
+            
+            users.forEach(user => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>
+                        <div class="user-info">
+                            <img src="${user.avatar}" alt="${user.name}">
+                            <div>
+                                <div>${user.name}</div>
+                                <div style="font-size: 0.8em; color: #8e8e8e;">@${user.username}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.followers.toLocaleString()}</td>
+                    <td>${user.following.toLocaleString()}</td>
+                    <td>
+                        ${user.verified ? 
+                            '<i class="fas fa-check-circle" style="color: #0095f6;"></i>' : 
+                            '<i class="fas fa-times-circle" style="color: #8e8e8e;"></i>'}
+                    </td>
+                    <td><span class="status-badge ${user.status}">${user.status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            ${!user.verified ? `<button class="btn-primary" onclick="openVerifyModal(${user.id})">Verify</button>` : ''}
+                            ${user.status === 'active' ? 
+                                `<button class="btn-danger" onclick="banUser(${user.id})">Ban</button>` : 
+                                `<button class="btn-primary" onclick="unbanUser(${user.id})">Unban</button>`}
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Load admins
+        function loadAdmins() {
+            const tbody = document.querySelector('#adminsTable tbody');
+            tbody.innerHTML = '';
+            
+            admins.forEach(admin => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>
+                        <div class="user-info">
+                            <img src="${admin.avatar}" alt="${admin.name}">
+                            <div>
+                                <div>${admin.name}</div>
+                                <div style="font-size: 0.8em; color: #8e8e8e;">@${admin.email.split('@')[0]}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${admin.email}</td>
+                    <td><span class="status-badge" style="background: #e8f0fe; color: #0095f6;">${admin.role}</span></td>
+                    <td>${admin.lastActive}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-danger" onclick="removeAdmin(${admin.id})">Remove</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Load store plans
+        function loadStorePlans() {
+            const tbody = document.querySelector('#plansTable tbody');
+            tbody.innerHTML = '';
+            
+            storePlans.forEach(plan => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${plan.name}</td>
+                    <td>${plan.category}</td>
+                    <td>$${plan.price}</td>
+                    <td>${plan.features.join(', ')}</td>
+                    <td>${plan.popular ? '<i class="fas fa-star" style="color: #f39c12;"></i>' : ''}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-primary" onclick="editPlan(${plan.id})">Edit</button>
+                            <button class="btn-danger" onclick="deletePlan(${plan.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Load reels
+        function loadReels() {
+            const tbody = document.querySelector('#reelsTable tbody');
+            tbody.innerHTML = '';
+            
+            reels.forEach(reel => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>
+                        <div class="user-info">
+                            <img src="${reel.thumbnail}" alt="Reel">
+                        </div>
+                    </td>
+                    <td>${reel.user}</td>
+                    <td>${reel.views.toLocaleString()}</td>
+                    <td>${reel.likes.toLocaleString()}</td>
+                    <td>${reel.comments}</td>
+                    <td><span class="status-badge ${reel.status}">${reel.status}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-danger" onclick="deleteReel(${reel.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+            });
+        }
+
+        // Load analytics
+        function loadAnalytics() {
+            if (!dailyActiveChart) {
+                const ctx3 = document.getElementById('dailyActiveChart').getContext('2d');
+                dailyActiveChart = new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Active Users',
+                            data: [1200, 1350, 1400, 1550, 1700, 1900, 2100],
+                            borderColor: '#a463f5',
+                            tension: 0.4
+                        }]
+                    }
+                });
+                
+                const ctx4 = document.getElementById('engagementChart').getContext('2d');
+                engagementChart = new Chart(ctx4, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Likes', 'Comments', 'Shares', 'Saves'],
+                        datasets: [{
+                            data: [45, 25, 15, 15],
+                            backgroundColor: ['#0095f6', '#00b894', '#f39c12', '#a463f5']
+                        }]
+                    }
+                });
+            }
+        }
+
+        // Admin functions
+        function openAddAdminModal() {
+            document.getElementById('addAdminModal').classList.add('active');
+        }
+
+        function closeAddAdminModal() {
+            document.getElementById('addAdminModal').classList.remove('active');
+        }
+
+        function addAdmin() {
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const role = document.getElementById('adminRole').value;
+            
+            if (!name || !email) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Check if admin already exists
+            if (admins.some(a => a.email === email)) {
+                alert('Admin already exists');
+                return;
+            }
+            
+            const newAdmin = {
+                id: admins.length + 1,
+                name: name,
+                email: email,
+                role: role,
+                lastActive: 'Just now',
+                avatar: 'https://via.placeholder.com/40'
+            };
+            
+            admins.push(newAdmin);
+            loadAdmins();
+            closeAddAdminModal();
+            
+            alert('Admin added successfully!');
+        }
+
+        function removeAdmin(adminId) {
+            if (confirm('Are you sure you want to remove this admin?')) {
+                const index = admins.findIndex(a => a.id === adminId);
+                if (index > -1) {
+                    admins.splice(index, 1);
+                    loadAdmins();
+                }
+            }
+        }
+
+        // Store plan functions
+        function openAddPlanModal() {
+            document.getElementById('addPlanModal').classList.add('active');
+        }
+
+        function closeAddPlanModal() {
+            document.getElementById('addPlanModal').classList.remove('active');
+        }
+
+        function addPlan() {
+            const name = document.getElementById('planName').value;
+            const category = document.getElementById('planCategory').value;
+            const price = parseFloat(document.getElementById('planPrice').value);
+            const features = document.getElementById('planFeatures').value.split('\n').filter(f => f.trim());
+            const popular = document.getElementById('planPopular').checked;
+            
+            if (!name || !category || !price || features.length === 0) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const newPlan = {
+                id: storePlans.length + 1,
+                name: name,
+                category: category,
+                price: price,
+                features: features,
+                popular: popular
+            };
+            
+            storePlans.push(newPlan);
+            loadStorePlans();
+            closeAddPlanModal();
+            
+            alert('Plan added successfully!');
+        }
+
+        function editPlan(planId) {
+            const plan = storePlans.find(p => p.id === planId);
+            if (plan) {
+                alert('Edit feature coming soon!');
+            }
+        }
+
+        function deletePlan(planId) {
+            if (confirm('Are you sure you want to delete this plan?')) {
+                const index = storePlans.findIndex(p => p.id === planId);
+                if (index > -1) {
+                    storePlans.splice(index, 1);
+                    loadStorePlans();
+                }
+            }
+        }
+
+        // User management functions
+        function openVerifyModal(userId) {
+            currentUserId = userId;
+            document.getElementById('verifyUserModal').classList.add('active');
+        }
+
+        function closeVerifyModal() {
+            document.getElementById('verifyUserModal').classList.remove('active');
+            currentUserId = null;
+        }
+
+        function confirmVerify() {
+            if (currentUserId) {
+                const user = users.find(u => u.id === currentUserId);
+                if (user) {
+                    user.verified = true;
+                    loadUsers();
+                    closeVerifyModal();
+                    alert('User verified successfully!');
+                }
+            }
+        }
+
+        function banUser(userId) {
+            if (confirm('Are you sure you want to ban this user?')) {
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    user.status = 'banned';
+                    loadUsers();
+                }
+            }
+        }
+
+        function unbanUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'active';
+                loadUsers();
+            }
+        }
+
+        // Reel management
+        function deleteReel(reelId) {
+            if (confirm('Are you sure you want to delete this reel?')) {
+                const index = reels.findIndex(r => r.id === reelId);
+                if (index > -1) {
+                    reels.splice(index, 1);
+                    loadReels();
+                }
+            }
+        }
+
+        // Settings
+        function saveSettings() {
+            const whatsapp = document.getElementById('whatsappNumber').value;
+            const buyNowLink = document.getElementById('buyNowLink').value;
+            const maintenance = document.getElementById('maintenanceMode').value;
+            
+            // Save to localStorage or send to server
+            localStorage.setItem('admin_settings', JSON.stringify({
+                whatsapp: whatsapp,
+                buyNowLink: buyNowLink,
+                maintenance: maintenance
+            }));
+            
+            alert('Settings saved successfully!');
+        }
+
+        // Export users
+        function exportUsers() {
+            const data = users.map(u => `${u.name},${u.email},${u.followers},${u.status}`).join('\n');
+            const blob = new Blob([data], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'users.csv';
+            a.click();
+        }
+
+        // Logout
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('zynsta_current_user');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        // Check admin access
+        window.onload = function() {
+            const user = JSON.parse(localStorage.getItem('zynsta_current_user') || '{}');
+            
+            // Check if user is admin
+            if (!user.isAdmin && user.email !== 'atifqmi@gmail.com') {
+                alert('Access denied. Admin only.');
+                window.location.href = 'homepage.html';
+                return;
+            }
+            
+            loadDashboard();
+        };
+    </script>
+</body>
+</html>
