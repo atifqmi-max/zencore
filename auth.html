@@ -134,12 +134,6 @@
             box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
         }
 
-        .form-group input[type="email"],
-        .form-group input[type="password"],
-        .form-group input[type="text"] {
-            background: #f8f9fa;
-        }
-
         .btn {
             width: 100%;
             padding: 14px;
@@ -213,69 +207,11 @@
             font-size: 0.9em;
         }
 
-        .verification-section {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            animation: slideDown 0.5s ease;
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .verification-section.active {
-            display: block;
-        }
-
-        .code-inputs {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-
-        .code-input {
-            width: 50px;
-            height: 50px;
-            text-align: center;
-            font-size: 1.5em;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-        }
-
-        .code-input:focus {
-            border-color: #667eea;
-            outline: none;
-        }
-
-        .timer {
-            text-align: center;
-            color: #667eea;
-            font-weight: 600;
-            margin: 10px 0;
-        }
-
-        .resend-link {
-            text-align: center;
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-
         .error-message {
             color: #dc3545;
             font-size: 0.9em;
             margin-top: 5px;
+            text-align: center;
             display: none;
         }
 
@@ -283,6 +219,7 @@
             color: #28a745;
             font-size: 0.9em;
             margin-top: 5px;
+            text-align: center;
             display: none;
         }
 
@@ -336,6 +273,8 @@
                     <i class="fab fa-google"></i>
                     Continue with Google
                 </button>
+                
+                <div id="loginError" class="error-message"></div>
             </div>
             
             <!-- Register Form -->
@@ -370,30 +309,9 @@
                     <i class="fab fa-google"></i>
                     Continue with Google
                 </button>
-            </div>
-            
-            <!-- Verification Section -->
-            <div id="verificationSection" class="verification-section">
-                <h3 style="text-align: center; margin-bottom: 15px;">Enter Verification Code</h3>
-                <p style="text-align: center; color: #6c757d; margin-bottom: 20px;">We've sent a code to your email</p>
                 
-                <div class="code-inputs">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 0)">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 1)">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 2)">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 3)">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 4)">
-                    <input type="text" class="code-input" maxlength="1" onkeyup="moveToNext(this, 5)">
-                </div>
-                
-                <div class="timer" id="timer">05:00</div>
-                
-                <button class="btn btn-primary" onclick="verifyCode()">Verify & Continue</button>
-                
-                <div class="resend-link" onclick="resendCode()">Resend Code</div>
-                
-                <div id="verificationError" class="error-message"></div>
-                <div id="verificationSuccess" class="success-message"></div>
+                <div id="registerError" class="error-message"></div>
+                <div id="registerSuccess" class="success-message"></div>
             </div>
         </div>
     </div>
@@ -403,14 +321,9 @@
     </div>
 
     <script>
-        // Admin credentials (private)
+        // Admin credentials
         const ADMIN_EMAIL = 'atifqmi@gmail.com';
         const ADMIN_PASSWORD = 'kistan**1';
-        
-        let currentUser = null;
-        let verificationCode = null;
-        let timerInterval = null;
-        let timeLeft = 300; // 5 minutes in seconds
         
         // Switch between login and register tabs
         function switchTab(tab) {
@@ -428,99 +341,49 @@
                 document.getElementById('registerForm').classList.add('active');
             }
             
-            // Hide verification section when switching tabs
-            document.getElementById('verificationSection').classList.remove('active');
-        }
-        
-        // Generate random 6-digit code
-        function generateVerificationCode() {
-            return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-        
-        // Send verification email (simulated)
-        function sendVerificationEmail(email, code) {
-            console.log(`Verification code for ${email}: ${code}`);
-            
-            // Check if admin
-            if (email === ADMIN_EMAIL) {
-                document.getElementById('adminBadge').classList.add('active');
-            }
-            
-            // In a real application, you would send an actual email here
-            alert(`Verification code sent to ${email}\n(For demo purposes, code is: ${code})`);
-            
-            // Start timer
-            startTimer();
-        }
-        
-        // Start countdown timer
-        function startTimer() {
-            timeLeft = 300;
-            updateTimerDisplay();
-            
-            if (timerInterval) {
-                clearInterval(timerInterval);
-            }
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateTimerDisplay();
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    document.querySelector('.resend-link').style.display = 'block';
-                }
-            }, 1000);
-        }
-        
-        // Update timer display
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timer').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        // Move to next input field
-        function moveToNext(current, index) {
-            if (current.value.length === 1) {
-                const next = document.querySelectorAll('.code-input')[index + 1];
-                if (next) {
-                    next.focus();
-                }
-            }
-            
-            // Auto-verify when all fields are filled
-            const inputs = document.querySelectorAll('.code-input');
-            const allFilled = Array.from(inputs).every(input => input.value.length === 1);
-            
-            if (allFilled) {
-                verifyCode();
-            }
+            // Clear error messages
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('registerError').style.display = 'none';
+            document.getElementById('registerSuccess').style.display = 'none';
         }
         
         // Handle login
         function handleLogin() {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginError');
             
             if (!email || !password) {
-                alert('Please fill in all fields');
+                errorElement.textContent = 'Please fill in all fields';
+                errorElement.style.display = 'block';
                 return;
             }
             
             // Check if admin
             if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                currentUser = {
+                const adminUser = {
+                    id: 'admin_' + Date.now(),
+                    name: 'Admin User',
                     email: email,
                     username: 'admin',
-                    name: 'Admin User',
-                    isAdmin: true
+                    isAdmin: true,
+                    avatar: 'https://via.placeholder.com/150',
+                    bio: 'Administrator',
+                    followers: 0,
+                    following: 0,
+                    posts: 0,
+                    verified: true,
+                    joinDate: new Date().toISOString()
                 };
                 
-                verificationCode = generateVerificationCode();
-                sendVerificationEmail(email, verificationCode);
-                showVerificationSection();
+                // Save user session
+                localStorage.setItem('zynsta_current_user', JSON.stringify(adminUser));
+                
+                // Show admin badge
+                document.getElementById('adminBadge').classList.add('active');
+                
+                // Redirect to admin panel
+                window.location.href = 'admin.html';
                 return;
             }
             
@@ -529,12 +392,14 @@
             const user = users.find(u => u.email === email && u.password === password);
             
             if (user) {
-                currentUser = user;
-                verificationCode = generateVerificationCode();
-                sendVerificationEmail(email, verificationCode);
-                showVerificationSection();
+                // Save user session
+                localStorage.setItem('zynsta_current_user', JSON.stringify(user));
+                
+                // Redirect to homepage
+                window.location.href = 'homepage.html';
             } else {
-                alert('Invalid email or password');
+                errorElement.textContent = 'Invalid email or password';
+                errorElement.style.display = 'block';
             }
         }
         
@@ -546,8 +411,13 @@
             const password = document.getElementById('regPassword').value;
             const phone = document.getElementById('regPhone').value;
             
+            const errorElement = document.getElementById('registerError');
+            const successElement = document.getElementById('registerSuccess');
+            
             if (!name || !email || !username || !password) {
-                alert('Please fill in all required fields');
+                errorElement.textContent = 'Please fill in all required fields';
+                errorElement.style.display = 'block';
+                successElement.style.display = 'none';
                 return;
             }
             
@@ -555,12 +425,16 @@
             const users = JSON.parse(localStorage.getItem('zynsta_users') || '[]');
             
             if (users.some(u => u.email === email)) {
-                alert('Email already registered');
+                errorElement.textContent = 'Email already registered';
+                errorElement.style.display = 'block';
+                successElement.style.display = 'none';
                 return;
             }
             
             if (users.some(u => u.username === username)) {
-                alert('Username already taken');
+                errorElement.textContent = 'Username already taken';
+                errorElement.style.display = 'block';
+                successElement.style.display = 'none';
                 return;
             }
             
@@ -571,77 +445,70 @@
                 email: email,
                 username: username,
                 password: password,
-                phone: phone,
+                phone: phone || '',
                 isAdmin: false,
                 verified: false,
+                avatar: 'https://via.placeholder.com/150',
+                bio: 'Hey there! I am using Zynsta',
+                website: '',
                 followers: 0,
                 following: 0,
                 posts: 0,
+                balance: 0,
                 joinDate: new Date().toISOString(),
                 lastUsernameChange: null,
                 lastNameChange: null
             };
-            currentUser = googleUser;
-            verificationCode = generateVerificationCode();
-            sendVerificationEmail(googleUser.email, verificationCode);
-            showVerificationSection();
+            
+            // Add to users list
+            users.push(newUser);
+            localStorage.setItem('zynsta_users', JSON.stringify(users));
+            
+            // Save user session
+            localStorage.setItem('zynsta_current_user', JSON.stringify(newUser));
+            
+            // Show success message
+            successElement.textContent = 'Registration successful! Redirecting...';
+            successElement.style.display = 'block';
+            errorElement.style.display = 'none';
+            
+            // Redirect to homepage
+            setTimeout(() => {
+                window.location.href = 'homepage.html';
+            }, 1500);
         }
         
-        // Show verification section
-        function showVerificationSection() {
-            document.getElementById('verificationSection').classList.add('active');
+        // Handle Google login
+        function handleGoogleLogin() {
+            // Simulate Google login
+            const googleEmail = 'user' + Math.floor(Math.random() * 1000) + '@gmail.com';
+            const googleUser = {
+                id: 'google_' + Date.now(),
+                name: 'Google User',
+                email: googleEmail,
+                username: 'google_user_' + Math.floor(Math.random() * 1000),
+                isAdmin: false,
+                verified: false,
+                avatar: 'https://via.placeholder.com/150',
+                bio: 'Hey there! I am using Zynsta',
+                website: '',
+                followers: 0,
+                following: 0,
+                posts: 0,
+                balance: 0,
+                joinDate: new Date().toISOString()
+            };
             
-            // Clear previous inputs
-            document.querySelectorAll('.code-input').forEach(input => {
-                input.value = '';
-            });
+            // Save to users list
+            const users = JSON.parse(localStorage.getItem('zynsta_users') || '[]');
+            users.push(googleUser);
+            localStorage.setItem('zynsta_users', JSON.stringify(users));
             
-            // Focus first input
-            document.querySelectorAll('.code-input')[0].focus();
-        }
-        
-        // Verify code
-        function verifyCode() {
-            const inputs = document.querySelectorAll('.code-input');
-            const code = Array.from(inputs).map(input => input.value).join('');
+            // Save user session
+            localStorage.setItem('zynsta_current_user', JSON.stringify(googleUser));
             
-            if (code.length !== 6) {
-                document.getElementById('verificationError').textContent = 'Please enter complete code';
-                document.getElementById('verificationError').style.display = 'block';
-                return;
-            }
-            
-            if (code === verificationCode) {
-                document.getElementById('verificationError').style.display = 'none';
-                document.getElementById('verificationSuccess').textContent = 'Verification successful! Redirecting...';
-                document.getElementById('verificationSuccess').style.display = 'block';
-                
-                // Save user session
-                localStorage.setItem('zynsta_current_user', JSON.stringify(currentUser));
-                
-                // Redirect based on user role
-                setTimeout(() => {
-                    if (currentUser.isAdmin) {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'homepage.html';
-                    }
-                }, 2000);
-            } else {
-                document.getElementById('verificationError').textContent = 'Invalid verification code';
-                document.getElementById('verificationError').style.display = 'block';
-            }
-        }
-        
-        // Resend code
-        function resendCode() {
-            if (timeLeft > 0) {
-                alert('Please wait for the timer to expire');
-                return;
-            }
-            
-            verificationCode = generateVerificationCode();
-            sendVerificationEmail(currentUser.email, verificationCode);
+            // Redirect to homepage
+            window.location.href = 'homepage.html';
         }
         
         // Check if already logged in
